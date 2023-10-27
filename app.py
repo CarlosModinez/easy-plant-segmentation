@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-from skimage.io import imread, imsave
+from PIL import Image
 import cv2
 import os
 import utils
@@ -45,7 +45,8 @@ def change():
         st.session_state.idx = 0
 
 def save():
-    imsave(mask_path, mask)
+    mask_saved = Image.fromarray(mask.astype(np.uint8))
+    mask_saved.save(mask_path)
     np.save(numpy_arr_path, mask)
     st.session_state.idx += 1
     if st.session_state.idx >= len(list):
@@ -59,7 +60,7 @@ if len(list) > 0:
     numpy_arr_path = list[st.session_state.idx]
     numpy_arr_path = numpy_arr_path.replace('JPG', 'npy')
 
-    img = imread(list[st.session_state.idx])
+    img = Image.open(list[st.session_state.idx])
     gray_image = utils.get_gray_image(img, vegetative_index=vegetative_indices[vegetative_index])
     threshold = utils.get_suggested_threshold(gray_image)
     number = st.slider("Pick a number", 0, 255, int(threshold))
