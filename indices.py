@@ -31,7 +31,6 @@ def get_cive(image):
     return _normalize_image(cive_img)
 
 def get_exgr(image):
-    R, G, B = _split_rgb_channels(image)
     exgr_img = get_exg(image) - get_exr(image)
     return _normalize_image(exgr_img)
 
@@ -42,7 +41,6 @@ def get_veg(image):
     return _normalize_image(veg_img)
 
 def get_com(image):
-    R, G, B = _split_rgb_channels(image)
     exg = 0.25 * get_exg(image)
     exgr = 0.3 * get_exgr(image)
     cive = 0.33 * get_cive(image)
