@@ -1,5 +1,6 @@
 import streamlit as st
 import numpy as np
+from skimage.io import imread, imsave
 from PIL import Image
 import cv2
 import os
@@ -33,8 +34,8 @@ dilation_kernel_shape = st.sidebar.selectbox("Dilation kernel shape", utils.kern
 dataset_path_text = st.empty()
 dataset_path = dataset_path_text.text_input("Dataset path", help='All image from this folder will be loaded', key="image_url")
 
-list = utils.search_image(dataset_path)
-# st.subheader(f"Total of {len(list)} images found")
+list = utils.search_image(dataset_path, [])
+st.subheader(f"Total of {len(list)} images found")
 
 if 'idx' not in st.session_state:
     st.session_state.idx = 0
@@ -60,7 +61,7 @@ if len(list) > 0:
     numpy_arr_path = list[st.session_state.idx]
     numpy_arr_path = numpy_arr_path.replace('JPG', 'npy')
 
-    img = Image.open(list[st.session_state.idx])
+    img = imread(list[st.session_state.idx])
     gray_image = utils.get_gray_image(img, vegetative_index=vegetative_indices[vegetative_index])
     threshold = utils.get_suggested_threshold(gray_image)
     number = st.slider("Pick a number", 0, 255, int(threshold))
