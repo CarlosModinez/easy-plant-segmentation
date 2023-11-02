@@ -77,9 +77,11 @@ def search_image(path, image_paths=[]):
     if os.path.exists(path) and os.path.isdir(path):
         for file in os.listdir(path):
             file_extension = file.split(".")[-1].lower()
-
             if file_extension in image_extensions:
-                image_paths.append(os.path.join(path, file))
+                image_path = os.path.join(path, file)
+                if not os.path.exists(image_path.replace('JPG', "png")):
+                    image_paths.append(os.path.join(path, file))
+            
             elif os.path.isdir(os.path.join(path, file)):
                 search_image(os.path.join(path, file), image_paths)
     return image_paths

@@ -3,6 +3,7 @@
 out
 log.log
 **/node_modules
+*.pth
 *.pyc
 *.vsix
 **/.vscode/.ropeproject/**
