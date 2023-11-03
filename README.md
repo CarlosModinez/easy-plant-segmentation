@@ -23,7 +23,7 @@ The tool supports various vegetation indices that can be used to detect the pres
 ## Preview
 
 <div align="center">
-  <img src="https://github.com/CarlosModinez/easy-plant-segmentation/blob/main/preview.gif"/>
+  <img src="https://github.com/CarlosModinez/easy-plant-segmentation/blob/main/preview.gif" width="100%"/>
 </div>
 <br>
 
