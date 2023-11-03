@@ -21,7 +21,11 @@ The tool supports various vegetation indices that can be used to detect the pres
 7. **Combined Indices (COM)**: A combination of multiple indices to improve detection.
 
 ## Preview
-![](https://github.com/CarlosModinez/easy-plant-segmentation/blob/main/preview.gif)
+
+<div align="center">
+  <img src="https://github.com/CarlosModinez/easy-plant-segmentation/blob/main/preview.gif"/>
+</div>
+<br>
 
 ## How to Use
 
