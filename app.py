@@ -35,7 +35,7 @@ dataset_path_text = st.empty()
 dataset_path = dataset_path_text.text_input("Dataset path", help='All image from this folder will be loaded', key="image_url")
 
 list = utils.search_image(dataset_path, [])
-st.subheader(f"Total of {len(list)} images found")
+st.subheader(f"Total of {len(list)} images missing")
 
 if 'idx' not in st.session_state:
     st.session_state.idx = 0
