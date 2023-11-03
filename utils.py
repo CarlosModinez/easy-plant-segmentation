@@ -10,7 +10,7 @@ kernel_shapes = {
     "Cross-shaped": cv2.MORPH_CROSS
 }
 
-def get_gray_image(rgb_image, vegetative_index):
+def get_gray_image(rgb_image, vegetative_index, _r=None, _g=None, _b=None):
     if vegetative_index == 0:
         gray_image = indices.get_exg(rgb_image)
     elif vegetative_index == 1:
@@ -23,6 +23,8 @@ def get_gray_image(rgb_image, vegetative_index):
         gray_image = indices.get_exgr(rgb_image)
     elif vegetative_index == 5:
         gray_image = indices.get_veg(rgb_image)
+    elif vegetative_index == 7:
+        gray_image = indices.get_custom(rgb_image, _r, _g, _b)
     else:
         gray_image = indices.get_com(rgb_image)
     return gray_image

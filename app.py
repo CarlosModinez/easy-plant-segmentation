@@ -17,6 +17,11 @@ st.sidebar.markdown("---")
 
 vegetative_index = st.sidebar.selectbox("Índice vegetativo", vegetative_indices.keys(), help="Principais índices vegetativos encontrados na literatura.")
 
+if vegetative_index == 'Custom':
+    r = st.sidebar.slider("Red multiplier", 0, 1000, 441)
+    g = st.sidebar.slider("Green multiplier", 0, 1000, 811)
+    b = st.sidebar.slider("Blue multiplier", 0, 1000, 385)
+
 st.sidebar.markdown("---")
 
 toggle_erosion = st.sidebar.checkbox("Apply erosion", value=True, help="")
@@ -62,7 +67,11 @@ if len(list) > 0:
     numpy_arr_path = numpy_arr_path.replace('JPG', 'npy')
 
     img = imread(list[st.session_state.idx])
-    gray_image = utils.get_gray_image(img, vegetative_index=vegetative_indices[vegetative_index])
+
+    if vegetative_index == 'Custom':
+        gray_image = utils.get_gray_image(img, vegetative_indices[vegetative_index], r/1000, g/1000, b/1000)
+    else:
+        gray_image = utils.get_gray_image(img, vegetative_indices[vegetative_index])
     threshold = utils.get_suggested_threshold(gray_image)
     number = st.slider("Pick a number", 0, 255, int(threshold))
     hist = utils.get_image_hist(gray_image)
