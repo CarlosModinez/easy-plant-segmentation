@@ -7,7 +7,8 @@ vegetative_indices = {
     "Normalized Difference Index (NDI)": 2,
     "Excessive rde minus excessive red (ExGR)": 4,
     "Vegetative index (VEG)": 5, 
-    "Combined indices (COM)": 6
+    "Combined indices (COM)": 6,
+    "Custom": 7
 }
 
 def get_exg(image):
@@ -48,6 +49,11 @@ def get_com(image):
 
     com_img = exg + exgr + cive + veg
     return _normalize_image(com_img)
+
+def get_custom(image, _r, _g, _b):
+    R, G, B = _split_rgb_channels(image)
+    custom_img = (_r * R) - (_g * G) + (_b * B)
+    return _normalize_image(custom_img)
 
 def _normalize_image(image):
     return ((image + np.abs(image.min())) / (np.abs(image.min()) + image.max()) * 255).astype(np.uint8)
