@@ -4,8 +4,8 @@ from skimage.io import imread, imsave
 from PIL import Image
 import cv2
 import os
-import utils
-from indices import vegetative_indices
+import vegetativeindex.utils as utils
+from vegetativeindex.indices import vegetative_indices
 
 ########## sidebar elements ##########
 

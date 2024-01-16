@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import indices
+from . import indices
 import cv2
 import os
 
