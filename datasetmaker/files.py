@@ -11,13 +11,17 @@ def get_corn_images(dataset_path: str, tillages: list) -> (list, list):
     image_paths = []
     mask_paths = []
     for tillage in tillages:
-        files = os.listdir(os.path.join(dataset_path, tillage))
-        images = list(filter(lambda x: '.jpg' in x, files))
-        masks = list(filter(lambda x: '.xml' in x, files))
+        img_files = os.listdir(os.path.join(dataset_path, tillage))
+        images = list(filter(lambda x: '.jpg' in x, img_files))
+        images = sorted(images)
+
+        mask_files = os.listdir(os.path.join(os.path.join(dataset_path, tillage),  "data/mark"))
+        masks = list(filter(lambda x: '.png' in x, mask_files))
+        masks = sorted(masks)
 
         for i in range(len(images)):
             image_paths.append(os.path.join(os.path.join(dataset_path, tillage), images[i]))
-            mask_paths.append(os.path.join(os.path.join(dataset_path, tillage), masks[i]))
+            mask_paths.append(os.path.join(os.path.join(os.path.join(dataset_path, tillage), "data/mark"), masks[i]))
 
     return image_paths, mask_paths
 
