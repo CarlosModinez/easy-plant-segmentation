@@ -1,0 +1,19 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Weed segmentation tool",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "/Users/carlosmodinez/Documents/TCC/segmentation_tool/app.py",
+                "--server.port",
+                "8080"
+            ],
+            "preLaunchTask": "killPort8080",
+        }
+    ],
+}
+    
