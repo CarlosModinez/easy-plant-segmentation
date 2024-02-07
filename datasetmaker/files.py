@@ -1,4 +1,6 @@
 import os
+import cv2
+import numpy as np
 
 def _clear_list(list: list) -> list:
     items_to_remove = ['.DS_Store', '.git']
@@ -53,3 +55,14 @@ def get_weeds_images_and_masks(dataset_path: str, families: list, species: list)
                             masks.append(os.path.join(os.path.join(os.path.join(os.path.join(dataset_path, family), specie), subfile), image_name))
 
     return (images, masks)
+
+def read_colorful_image(path) -> np.array:
+    image = cv2.imread(path, cv2.IMREAD_COLOR)
+    return cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+def read_grayscale_image(path) -> np.array:
+    return cv2.imread(path, 0)
+
+def save_image(image: np.array, path: str) -> None:
+    new_iamge = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    cv2.imwrite(path, new_iamge)

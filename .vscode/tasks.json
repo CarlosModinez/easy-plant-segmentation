@@ -1,0 +1,16 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "killPort8080",
+            "command": "bash",
+            "type": "shell",
+            "args": [
+                "-c", 
+                "lsof -t -i:8080 | xargs kill -9"
+            ]
+        }
+    ]
+}
