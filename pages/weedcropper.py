@@ -23,115 +23,42 @@ st.set_page_config(
 
 st.sidebar.title("Easy plant segmentation 🌱")
 st.sidebar.caption("")
+st.sidebar.markdown("Made by [Carlos Modinez](https://www.linkedin.com/in/carlos-modinez/)")
+st.sidebar.caption("")
 st.sidebar.markdown("---")
 
-crop_height = int(st.sidebar.number_input("Crop height", value=1000, help="Crop height"))
-crop_width = int(st.sidebar.number_input("Crop width", value=1000, help="Crop width"))
+crop_height = int(st.sidebar.number_input("Crop height", value=256, help="Crop height"))
+crop_width = int(st.sidebar.number_input("Crop width", value=256, help="Crop width"))
+
+st.sidebar.markdown("Padding size")
+
+padding_width = int(st.sidebar.number_input("Padding width", value=30))
+padding_height = int(st.sidebar.number_input("Padding Height", value=30))
+
+st.sidebar.markdown(f"Your output image size is {crop_height + padding_height}:{crop_width + padding_width}")
 
 ########## body elements ##########
+images_path = st.empty().text_input("Images folder", help='All image from this folder will be loaded', key="image_url")
+annot_path = st.empty().text_input("Annotations folder")
 
-def search_images(path, image_paths=[], extensions=['jpg', 'jpeg']):
-    image_extensions = extensions
+images = [os.path.join(images_path, f) for f in os.listdir(images_path) if 'png' in f]
+annotations = [os.path.join(images_path, f) for f in os.listdir(images_path) if 'png' in f]
+index = 0
 
-    if os.path.exists(path) and os.path.isdir(path):
-        for file in os.listdir(path):
-            file_extension = file.split(".")[-1].lower()
-            if file_extension in image_extensions:
-                image_paths.append(os.path.join(path, file))
-            elif os.path.isdir(os.path.join(path, file)):
-                search_images(os.path.join(path, file), image_paths)
-    return image_paths
+if len(images) > 0:
+    image_path = images[index]
+    image = cv2.imread(images[index])
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    fig_1, ax_1 = plt.subplots()
+    ax_1.imshow(image)
+    ax_1.axis('off')
+    st.pyplot(fig_1)
 
-def find_class_index(image_path: str):
-    classes = [
-        "Amaranthus hybridos", "Cyclospermum leptophyllum", "Tridax procumbens",
-        "Sonchus oleraceus", "Bidens-pilosa", "Lelidium virginum", "Ipomoeae purpurea",
-        "Leonurus sibiricus", "Sorghum arundinaceum", "Rhynchelytrumrepens",
-        "Digitaria insularis", "Choris barbata", "Cenchus echinatus", "Physalis angulata"
-    ]
+    crops, n_crops_x, n_crops_y = cropper.crop_image(image, (crop_height, crop_width), (padding_width, padding_height))
+    fig, axes = plt.subplots(n_crops_y, n_crops_x, figsize=(n_crops_x*10, n_crops_y * 10))
+    st.markdown(f'crops: {len(crops)}; n_crops: {n_crops_x}:{n_crops_y} ; axes len: {len(axes)}')
+    for i, ax in enumerate(axes.flatten()):
+        ax.imshow(crops[i])
+        ax.axis('off')
 
-    for index, class_name in enumerate(classes):
-        if class_name.lower() in image_path.lower():
-            return index
-    return None
-
-def build_dataset():
-    destination_seg_dataset = f"/Users/carlosmodinez/Documents/TCC/datasets/{crop_height}x{crop_width}"
-    image_paths = search_images(ORIGINAL_DATASET_PATH, [])
-
-    train, test_val = train_test_split(image_paths, test_size=0.3, random_state=42)
-    test, val = train_test_split(test_val, test_size=0.5, random_state=42)
-
-    for split in [train, test, val]:
-        if split == train:
-            destination_images_path =  os.path.join(destination_seg_dataset, 'train/images')
-            destination_masks_path =  os.path.join(destination_seg_dataset, 'train/masks')
-
-            os.makedirs(destination_images_path)
-            os.makedirs(destination_masks_path)
-        elif split == test:
-            destination_images_path =  os.path.join(destination_seg_dataset, 'test/images')
-            destination_masks_path =  os.path.join(destination_seg_dataset, 'test/masks')
-            
-            os.makedirs(destination_images_path)
-            os.makedirs(destination_masks_path)
-        else:
-            destination_images_path =  os.path.join(destination_seg_dataset, 'val/images')
-            destination_masks_path =  os.path.join(destination_seg_dataset, 'val/masks')
-
-            os.makedirs(destination_images_path)
-            os.makedirs(destination_masks_path)
-
-        for index, image_path in enumerate(split):
-            class_index = find_class_index(image_path)
-            image = files.read_colorful_image(image_path)
-            mask = cv2.imread(image_path.replace('JPG', 'png'), cv2.IMREAD_GRAYSCALE)
-
-            im_crops, _, _ = cropper.crop_image(image, (crop_height, crop_width))
-            mask_crops, _, _ = cropper.crop_image(mask, (crop_height, crop_width))
-
-            for crop_index in range(len(im_crops)):
-                destination_image = os.path.join(destination_images_path, f"{index}_{crop_index}.png")
-                destination_mask = os.path.join(destination_masks_path, f"{index}_{crop_index}.png")
-
-                mask_crop = mask_crops[crop_index]
-                mask_crop[mask_crop != 0] = 255 # to remove the effect of resizing
-
-                modified_mask = np.zeros((mask_crop.shape[0], mask_crop.shape[1], 1), dtype=np.uint8) #(224 x 224) -> (224 x 224 x 1)
-                modified_mask[:, :, 0] = ((mask_crop/255) * (class_index + 1)).astype('uint8') # (0 > 255) -> (0 > class_index)
-
-                files.save_image(im_crops[crop_index], destination_image)
-                files.save_image(modified_mask, destination_mask)
-
-def show_example():
-    image_paths = search_images(ORIGINAL_DATASET_PATH, [])
-    ex_index = random.randint(0, len(image_paths) - 1)
-    image_path = image_paths[ex_index]
-    ex_image = files.read_colorful_image(image_path)
-    ex_mask = files.read_grayscale_image(image_path.replace('JPG', 'png'))
-
-    st.image(ex_image)
-    st.image(ex_mask)
-
-    img_size = (crop_height, crop_width)
-    im_crops, n_crops_x, n_crops_y = cropper.crop_image(ex_image, img_size)
-    mask_crops, _, _ = cropper.crop_image(ex_mask, img_size)
-
-    img_fig, im_axs = plt.subplots(n_crops_y, n_crops_x)
-    mask_fig, mask_axs = plt.subplots(n_crops_y, n_crops_x)
-
-    im_axs = im_axs.flatten()
-    mask_axs = mask_axs.flatten()
-
-    for index in range(len(im_axs)):
-        im_axs[index].axis('off')
-        mask_axs[index].axis('off')
-        im_axs[index].imshow(im_crops[index])
-        mask_axs[index].imshow(mask_crops[index])
-
-    st.pyplot(img_fig)
-    st.pyplot(mask_fig)
-
-st.sidebar.button("Generate images", on_click=build_dataset)
-st.button("Example", on_click=show_example)
-st.sidebar.button("Update example", on_click=show_example)
+    st.pyplot(fig)

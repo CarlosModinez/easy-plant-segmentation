@@ -13,7 +13,7 @@ vegetative_indices = {
 
 def get_exg(image):
     R, G, B = _split_rgb_channels(image)
-    exg_image = 2*G - R - G
+    exg_image = (2*G - R - G)*-1
     return _normalize_image(exg_image)
 
 def get_exr(image):
@@ -23,7 +23,7 @@ def get_exr(image):
 
 def get_ndi(image):
     R, G, _ = _split_rgb_channels(image)
-    ndi_image = (G - R) / (G + R)
+    ndi_image = (128*(((G - R) / (G + R)) + 1)) *-1
     return _normalize_image(ndi_image)
 
 def get_cive(image):
@@ -32,7 +32,7 @@ def get_cive(image):
     return _normalize_image(cive_img)
 
 def get_exgr(image):
-    exgr_img = get_exg(image) - get_exr(image)
+    exgr_img = get_exr(image) - get_exg(image)
     return _normalize_image(exgr_img)
 
 def get_veg(image):
@@ -59,4 +59,4 @@ def _normalize_image(image):
     return ((image + np.abs(image.min())) / (np.abs(image.min()) + image.max()) * 255).astype(np.uint8)
 
 def _split_rgb_channels(image):
-    return image[:,:,0], image[:,:,1], image[:,:,2]
+    return image[:,:,0]/np.max(image[:,:,0]), image[:,:,1]/np.max(image[:,:,1]), image[:,:,2]/np.max(image[:,:,2])

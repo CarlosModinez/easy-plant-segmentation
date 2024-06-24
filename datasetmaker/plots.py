@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from PIL import Image
 import random
+import cv2
 
 def plot_samples(images, masks):
     columns = 4
@@ -33,4 +34,41 @@ def plot_corns(images: list):
     
     plt.tight_layout()
 
+    return fig
+
+def plot_shadow_positions(image, shades, ellipses):
+    colors = [(255,0,0), (0,255,0), (0,0,255), 
+              (255,0,255), (255,255,0), (255,0,255), 
+              (128,0,0), (0,128,0), (0,0,128),
+              (128,0,128), (128,128,0),(128,0,128)]
+    
+    for index, shadow in enumerate(shades):
+        color = colors[index]
+        image = cv2.ellipse(image, ellipses[index].center, ellipses[index].radius, ellipses[index].angle, 0, 360, color, 5)
+
+        for point in shadow:
+            image = cv2.circle(image, point, 10, color, -1)
+
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.axis('off')
+    ax.imshow(image)
+    return fig
+
+def plot_sample_positions(image, groups):
+    colors = [(255,0,0), (0,255,0), (0,0,255), 
+              (255,0,255), (255,255,0), (255,0,255), 
+              (128,0,0), (0,128,0), (0,0,128),
+              (128,0,128), (128,128,0),(128,0,128),
+              (64,0,0), (0,64,0),(0,0,64),
+              (64,0,64), (64,64,0),(64,0,64)]
+    
+    for index, points in enumerate(groups):
+        color = colors[index]
+
+        for point in points:
+            image = cv2.circle(image, point, 10, color, -1)
+
+    fig, ax = plt.subplots(figsize=(20,10))
+    ax.axis('off')
+    ax.imshow(image)
     return fig

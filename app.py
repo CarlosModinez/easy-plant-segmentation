@@ -36,8 +36,7 @@ dilation_kernel_shape = st.sidebar.selectbox("Dilation kernel shape", utils.kern
 
 ########## body elements ##########
 
-dataset_path_text = st.empty()
-dataset_path = dataset_path_text.text_input("Dataset path", help='All image from this folder will be loaded', key="image_url")
+dataset_path = st.empty().text_input("Dataset path", help='All image from this folder will be loaded', key="image_url")
 
 list = utils.search_image(dataset_path, [])
 st.subheader(f"Total of {len(list)} images missing")
